@@ -17,3 +17,6 @@ export interface CommentDataArrayType{
     author: string;
 }
 
+export interface UserDataType{
+    username: string;
+}

@@ -7,11 +7,6 @@ interface Props{
     id: string;
     title: string;
     columnId: string;
-    commentDataArray: CommentDataArrayType[];
-    cardDescription: string;
-    editCardTitleFunction: (cardId: string, newTitle: string) => void;
-    addCommentFunction: (title: string, CardId: string, author: string) => void;
-    editDescription: (cardId: string, newDescription: string) => void;
 }
 
 function Card(props:Props){
@@ -27,11 +22,6 @@ function Card(props:Props){
             {cardModalFlag === true ? 
             
                 <CardModal 
-                    editDescription={props.editDescription}
-                    addCommentFunction={props.addCommentFunction} 
-                    cardDescription={props.cardDescription} 
-                    editCardTitleFunction={props.editCardTitleFunction} 
-                    commentDataArray={props.commentDataArray} 
                     changeCardModalFlag={changeCardModalFlag} 
                     columnId={props.columnId} 
                     id={props.id} 

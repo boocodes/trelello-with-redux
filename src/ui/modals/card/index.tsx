@@ -1,6 +1,16 @@
 import { useState } from "react";
 import styled from "styled-components";
-import {CommentDataArrayType, CommentList, Description} from '../../../';
+import {CommentDataArrayType, 
+        CommentList, 
+        Description,
+        useAppDispatch, 
+        RootState,
+        editCard,
+        addComment,
+        selectUsername,
+        useAppSelector,
+        selectCommentArray,
+    } from '../../../';
 import React from 'react';
 
 
@@ -8,49 +18,29 @@ interface Props{
     title: string;
     id: string;
     columnId: string;
-    changeCardModalFlag: (flag: boolean) => void;
-    cardDescription: string;
-    commentDataArray: CommentDataArrayType[];
-    editCardTitleFunction: (cardId: string, newTitle: string) => void;
-    addCommentFunction: (title: string, CardId: string, author: string) => void;
-    editDescription: (cardId: string, newDescription: string) => void;
+    changeCardModalFlag: (flag:boolean) => void;
 }
 
 function CardModal(props:Props){
 
+    const dispatch = useAppDispatch();
+    const username = useAppSelector(selectUsername);
+    console.log(username);
     const addCommentInputRef = React.useRef<HTMLInputElement>(null);
     const [editCardTitleFlag, setEditCardTitleFlag] = useState<boolean>(false);
     const editCardTitleInputRef = React.useRef<HTMLInputElement>(null);
+    const commentArray = useAppSelector(selectCommentArray);
 
-    function innerEditCardTitleFunction(flag: boolean){
-        if(flag){   
-            setEditCardTitleFlag(flag);
-            return;
-        }
-        else{
-            if(editCardTitleInputRef.current?.value.trim()){
-                props.editCardTitleFunction(props.id, editCardTitleInputRef.current.value);
-                setEditCardTitleFlag(flag);
-                return;
-            }
-           
-        }
+
+    function editCardFunction(){
+        if(!editCardTitleInputRef.current?.value.trim()) return;
+        dispatch(editCard({id: props.id, title: editCardTitleInputRef.current.value}));
+    }
+    function addCommentFunction(){
+        if(!addCommentInputRef.current?.value.trim()) return;
+        dispatch(addComment({id: Math.random().toString(), author: username, title: addCommentInputRef.current.value, cardId: props.id}));
     }
 
-
-    function innerAddCommentFunction(){
-        if(addCommentInputRef.current?.value.trim()){
-            props.addCommentFunction(addCommentInputRef.current.value, props.id, localStorage.getItem('username')?.toString() || 'Unknown');
-            addCommentInputRef.current.value = '';
-            return;
-        }   
-        else{
-            return;
-        }
-    }
-
-
-    console.log("!");
     return(
         <>
             <Overlay onClick={()=>{
@@ -64,7 +54,7 @@ function CardModal(props:Props){
                         editCardTitleFlag === true ? 
                             <EditCardTitleForm onSubmit={(event: any)=>{
                                 event.preventDefault();
-                                innerEditCardTitleFunction(false);
+                                editCardFunction();
                             }}>
                                 <EditCardTitleInput ref={editCardTitleInputRef} defaultValue={props.title}/> 
                             </EditCardTitleForm>
@@ -74,17 +64,22 @@ function CardModal(props:Props){
                     }
                     {
                         editCardTitleFlag === true ? 
-                            <SubmitEditCardTitleImage onClick={()=>{innerEditCardTitleFunction(false)}} src={"./images/okIcon.png"}/>
+                            <SubmitEditCardTitleImage onClick={()=>{
+                                setEditCardTitleFlag(false);
+                                editCardFunction();
+                            }} src={"./images/okIcon.png"}/>
                             :
-                            <EditCardTitleIconImage onClick={()=>{innerEditCardTitleFunction(true)}} src="./images/editIcon.png"/>
+                            <EditCardTitleIconImage onClick={()=>{
+                                setEditCardTitleFlag(true);
+                            }} src="./images/editIcon.png"/>
                     }    
                 </CardTitleInnerWrapper>
-                <Description editDescription={props.editDescription} cardId={props.id} descriptionText={props.cardDescription}/>
+                <Description cardId={props.id}/>
                 <CommentWrapper>
-                    <CommentList commentDataArray={props.commentDataArray} cardId={props.id}/>
+                    <CommentList cardId={props.id}/>
                     <AddCommentForm onSubmit={(event: any)=>{
                         event.preventDefault();
-                        innerAddCommentFunction();
+                        addCommentFunction();
                     }}>
                         <AddCommentInput ref={addCommentInputRef} placeholder="text"/>
                         <AddCommentButton>Send</AddCommentButton>

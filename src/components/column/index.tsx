@@ -1,5 +1,11 @@
 import styled from "styled-components";
-import { CardList, CardDataArrayType, CommentDataArrayType } from '../../';
+import { CardList, 
+        CardDataArrayType, 
+        CommentDataArrayType,
+        addCard,
+        useAppDispatch,
+        editColumn,
+    } from '../../';
 import React from 'react';
 import {useState} from 'react';
 
@@ -7,29 +13,24 @@ import {useState} from 'react';
 interface Props{
     title: string;
     id: string;
-    cardDataArray: CardDataArrayType[];
-    addCardFunction: (columnId: string, title: string) => void;
-    commentDataArray: CommentDataArrayType[];
-    editCardTitleFunction: (cardId: string, newTitle: string) => void;
-    addCommentFunction: (title: string, CardId: string, author: string) => void;
-    editDescription: (cardId: string, newDescription: string) => void;
-    editColumnTitle: (columnId: string, newTitle: string) => void;
 }
 
 
 function Column(props:Props){
+
+    const dispatch = useAppDispatch();
     const cardNameInputRef = React.useRef<HTMLInputElement>(null)
     const [editColumnTitleFlag, setEditColumnTitleFlag] = useState<boolean>(false);
     const editColumnTitleInputRef = React.useRef<HTMLInputElement>(null);
     function createCard(){
         if(!cardNameInputRef.current?.value.trim()) return;
-        props.addCardFunction(props.id, cardNameInputRef.current.value);
+        dispatch(addCard({id: Math.random().toString(), title: cardNameInputRef.current.value, columnId: props.id, description: 'None value'}))
         cardNameInputRef.current.value = '';
     }
 
     function editColumnTitle(){
         if(!editColumnTitleInputRef.current?.value.trim()) return;
-        props.editColumnTitle(props.id, editColumnTitleInputRef.current.value);
+        dispatch(editColumn({id: props.id, title: editColumnTitleInputRef.current.value}))
         setEditColumnTitleFlag(false);
     }
 
@@ -55,11 +56,6 @@ function Column(props:Props){
             }
             
             <CardList 
-                editDescription={props.editDescription}
-                addCommentFunction={props.addCommentFunction} 
-                editCardTitleFunctin={props.editCardTitleFunction} 
-                commentDataArray={props.commentDataArray} 
-                cardDataArray={props.cardDataArray} 
                 columnId={props.id}/>
             <AddCardWrapper onSubmit={(event: any)=>{
                 event.preventDefault();

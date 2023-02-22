@@ -1,4 +1,9 @@
 import styled from "styled-components";
+import {
+    selectUsername,
+    useAppSelector,
+}   from '../../';
+
 
 interface Props{
     username?: string;
@@ -6,10 +11,14 @@ interface Props{
 
 
 function Header(props:Props){
+
+
+    const username = useAppSelector(selectUsername);
+
     return(
         <ExternalWrapper>
             <Title>Trelello</Title>
-            <Username>{props.username}</Username>
+            <Username>{username}</Username>
         
         </ExternalWrapper>
     )

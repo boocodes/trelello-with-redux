@@ -1,29 +1,25 @@
 import styled from "styled-components";
 import { useRef } from "react";
 import React from "react";
+import {
+    useAppDispatch,
+    changeUsername,
+}   from '../../../';
 
 
 interface Props{
-    setUserNameFunction: (name:string) => void; 
 
 }
 
 function UserNameModal(props:Props){
+    const dispatch = useAppDispatch();
 
     const userInputRef = React.useRef<HTMLInputElement>(null);
 
     function enterUserNameFunction(){
-        if(userInputRef.current?.value !== undefined){
-            if(userInputRef.current.value.trim()){
-                props.setUserNameFunction(userInputRef.current.value);
-            }
-            else{
-                return;
-            }
-        }
-        else{
-            return 0;
-        }
+        if(!userInputRef.current?.value.trim()) return;
+        dispatch(changeUsername({username: userInputRef.current.value}))
+        userInputRef.current.value = "";   
     }
 
     return(

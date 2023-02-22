@@ -1,43 +1,39 @@
 import styled from "styled-components";
-import { ColumnDataArrayType, Column, CardDataArrayType, CommentDataArrayType} from "../../";
+import { ColumnDataArrayType, 
+        Column, 
+        CardDataArrayType, 
+        CommentDataArrayType,
+        selectColumnArray,
+        useAppSelector,
+        RootState,
+        useAppDispatch,
+        addColumn,
+    } from "../../";
 import React from "react";
 import {useState} from 'react';
 
 interface Props{
-    columnDataArray: ColumnDataArrayType[];
-    cardDataArray: CardDataArrayType[];
-    addCardFunction: (columnId: string, title: string) => void;
-    addColumnFunction: (title: string) => void;
-    commentDataArray: CommentDataArrayType[];
-    editCardTitleFunction: (cardId: string, newTitle: string) => void;
-    addCommentFunction: (title: string, CardId: string, author: string) => void;
-    editDescription: (cardId: string, newDescription: string) => void;
-    editColumnTitle: (columnId: string, newTitle: string) => void;
 }
 
 function ColumnList(props:Props){
-
+    const dispatch = useAppDispatch()
+    
+    const columnArray = useAppSelector(selectColumnArray);
     const columnTitleInputRef = React.useRef<HTMLInputElement>(null);
     const [newColumnInputData, setNewColumnInputData] = useState<string>('')
 
     function createColumn(){
         if(!columnTitleInputRef.current?.value.trim()) return;
-        props.addColumnFunction(columnTitleInputRef.current.value);
+        dispatch(addColumn({id: Math.random().toString(), title: columnTitleInputRef.current.value}))
         columnTitleInputRef.current.value = '';
     }
 
+
     return(
         <ExternalWrapper>
-            {props.columnDataArray.map((elem:ColumnDataArrayType)=>{
+            {columnArray.map((elem:ColumnDataArrayType)=>{
                 return(
                     <Column 
-                        editColumnTitle={props.editColumnTitle}
-                        editDescription={props.editDescription} 
-                        addCommentFunction={props.addCommentFunction} 
-                        editCardTitleFunction={props.editCardTitleFunction} 
-                        commentDataArray={props.commentDataArray} 
-                        addCardFunction={props.addCardFunction} 
-                        cardDataArray={props.cardDataArray} 
                         title={elem.title} 
                         id={elem.id} 
                         key={elem.id.toString()}/>

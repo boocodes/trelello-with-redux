@@ -1,19 +1,25 @@
 import styled from "styled-components";
-import {CommentDataArrayType, Comment} from '../../';
+import {CommentDataArrayType, 
+        Comment,
+        useAppSelector,
+        selectCommentArray,
+} from '../../';
 
 
 interface Props{
-    commentDataArray: CommentDataArrayType[];
     cardId: string;
 }
 
 
 function CommentList(props:Props){
+
+    const commentArray = useAppSelector(selectCommentArray);
+
     return(
         <>
             <ExternalWrapper>
                 
-                {props.commentDataArray.map((elem:CommentDataArrayType)=>{
+                {commentArray.map((elem:CommentDataArrayType)=>{
                         if(elem.cardId === props.cardId){
                             return(
                                 <Comment key={Math.random().toString()} cardId={props.cardId} commentDataObject={elem}/>

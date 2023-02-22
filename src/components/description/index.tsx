@@ -1,25 +1,34 @@
 import styled from 'styled-components'
 import { useState } from 'react';
 import React from 'react';
+import {
+    selectCardById,
+    useAppSelector,
+    RootState,
+    CardDataArrayType,
+    selectCardArray,
+    editCard,
+    useAppDispatch,
+}   from '../../';
 
 interface Props{
     cardId: string;
-    descriptionText: string;
-    editDescription: (cardId: string, newDescription: string) => void;
 }
 
 
 function Description(props:Props){
-
+    const dispatch = useAppDispatch();
+    const card = useAppSelector((state:RootState)=> selectCardById(state, props.cardId))[0];
     const [editDescriptionFlag, setEditDescriptionFlag] = useState<boolean>(false);
     const editDescriptionInputRef = React.useRef<HTMLInputElement>(null);
 
     function innerEditDescriptionFunction(){
         if(!editDescriptionInputRef.current?.value.trim()) return;
-        props.editDescription(props.cardId, editDescriptionInputRef.current.value);
+        dispatch(editCard({id: props.cardId, description: editDescriptionInputRef.current.value}));
+        // props.editDescription(props.cardId, editDescriptionInputRef.current.value);
         setEditDescriptionFlag(false);
     }
-
+    console.log(card);
     return(
         <>
             {
@@ -28,8 +37,9 @@ function Description(props:Props){
                     setEditDescriptionFlag(!editDescriptionFlag);
                     
                 }}>
+                
                     <DescriptionText>
-                        {props.descriptionText}
+                        {card.description}
                     </DescriptionText>
                 </ExternalWrapper>
                 :
@@ -37,7 +47,7 @@ function Description(props:Props){
                     e.preventDefault();
                     innerEditDescriptionFunction();
                 }}>
-                    <EditDescriptionInput defaultValue={props.descriptionText} ref={editDescriptionInputRef} />
+                    <EditDescriptionInput defaultValue={card.description} ref={editDescriptionInputRef} />
                 </EditDescriptionForm>
             }
         </>

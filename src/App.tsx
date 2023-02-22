@@ -1,32 +1,24 @@
 import React from 'react';
 import { Header } from './';
 import styled from 'styled-components';
-import {UserNameModal} from './';
-import {Application} from './';
+import {
+  UserNameModal,
+  Application,
+  selectUsername,
+  useAppSelector,
+} from "./";
 import { useState, useEffect, useMemo } from 'react';
 
 function App() {
 
-  const [userName, setUserName] = useState<null | any>(null);
-  function setUserNameFunction(name: string){
-    localStorage.setItem('username', name);
-    setUserName(name);
-  }
-
-  useEffect(()=>{
-    if(localStorage.getItem('username') !== null){
-      setUserName(localStorage.getItem('username'));
-    }
-    else{
-      setUserName(null);
-    }
-  }, [])
+  const username = useAppSelector(selectUsername);
+  console.log(username);
 
   return (
     <>
-      <Header username={userName}/>
-      <Application username={userName}/>
-      {userName === null ? <UserNameModal setUserNameFunction={setUserNameFunction}/> : null}
+      <Header/>
+      <Application />
+      {username === "" ? <UserNameModal /> : null}
     </>
   );
 }
